@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Architecture Calculators</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .sub-tab-content { display: none; }
+    .sub-tab-content.active { display: block; }
+    .decision-step { display: none; }
+    .decision-step.active { display: block; }
+    .card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .nav-link.active {
+      background-color: #2dd4bf;
+      color: white;
+    }
+    .nav-link:hover {
+      background-color: #2dd4bf;
+      color: white;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2dd4bf;
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+    }
+    .tab-button.active {
+      background-color: #2dd4bf !important;
+      color: white !important;
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="bg-gray-800 text-white p-4 sticky top-0 z-10 shadow-lg">
+    <div class="container mx-auto flex justify-center space-x-4">
+      <a href="#service-catalog" class="nav-link px-4 py-2 rounded active" onclick="showMainTab('service-catalog')">Service Catalog</a>
+      <a href="#finops-kpis" class="nav-link px-4 py-2 rounded" onclick="showMainTab('finops-kpis')">FinOps KPIs</a>
+      <a href="#gen-ai-calculator" class="nav-link px-4 py-2 rounded" onclick="showMainTab('gen-ai-calculator')">Gen AI Cost</a>
+      <a href="#cloud-cost" class="nav-link px-4 py-2 rounded" onclick="showMainTab('cloud-cost')">Cloud Cost</a>
+      <a href="#ai-decision" class="nav-link px-4 py-2 rounded" onclick="showMainTab('ai-decision')">AI Decision Tree</a>
+      <a href="#fabric-tool" class="nav-link px-4 py-2 rounded" onclick="showMainTab('fabric-tool')">Fabric Tool</a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Enterprise Architecture Calculators</h1>
+
+    <!-- Tabbed Content -->
+    <div id="main-tabs">
+      <!-- Service Catalog -->
+      <div id="service-catalog" class="tab-content active bg-white p-6 rounded-xl shadow-lg card fade-in">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-list mr-2 text-teal-500"></i>Service Catalog</h2>
+        <!-- Sub-Tabs -->
+        <div class="flex space-x-4 mb-4">
+          <button class="tab-button px-4 py-2 rounded bg-teal-500 text-white active" onclick="showSubTab('aws')">AWS Services</button>
+          <button class="tab-button px-4 py-2 rounded bg-gray-200 text-gray-700" onclick="showSubTab('azure')">Azure Services</button>
+          <button class="tab-button px-4 py-2 rounded bg-gray-200 text-gray-700" onclick="showSubTab('other')">Other Services</button>
+        </div>
+        <!-- AWS Sub-Tab -->
+        <div id="aws" class="sub-tab-content active">
+          <input type="text" id="search-aws" class="w-full p-2 mb-4 border rounded-lg" placeholder="Search by name or description" oninput="filterTable('aws')">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse" id="table-aws">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="p-3 text-left text-gray-700">Name</th>
+                  <th class="p-3 text-left text-gray-700">Description</th>
+                  <th class="p-3 text-left text-gray-700">Provider</th>
+                  <th class="p-3 text-left text-gray-700">Availability</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">EC2 Hosting</td>
+                  <td class="p-3">Scalable virtual machines for enterprise apps</td>
+                  <td class="p-3">AWS</td>
+                  <td class="p-3">Public Sector</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">S3 Storage</td>
+                  <td class="p-3">Object storage for large datasets</td>
+                  <td class="p-3">AWS</td>
+                  <td class="p-3">Ministries Only</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Lambda Functions</td>
+                  <td class="p-3">Serverless compute for event-driven tasks</td>
+                  <td class="p-3">AWS</td>
+                  <td class="p-3">Public Sector</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Azure Sub-Tab -->
+        <div id="azure" class="sub-tab-content">
+          <input type="text" id="search-azure" class="w-full p-2 mb-4 border rounded-lg" placeholder="Search by name or description" oninput="filterTable('azure')">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse" id="table-azure">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="p-3 text-left text-gray-700">Name</th>
+                  <th class="p-3 text-left text-gray-700">Description</th>
+                  <th class="p-3 text-left text-gray-700">Provider</th>
+                  <th class="p-3 text-left text-gray-700">Availability</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Azure VMs</td>
+                  <td class="p-3">Virtual machines for cloud workloads</td>
+                  <td class="p-3">Azure</td>
+                  <td class="p-3">Public Sector</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Blob Storage</td>
+                  <td class="p-3">Scalable storage for unstructured data</td>
+                  <td class="p-3">Azure</td>
+                  <td class="p-3">Ministries Only</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Azure Functions</td>
+                  <td class="p-3">Serverless compute for microservices</td>
+                  <td class="p-3">Azure</td>
+                  <td class="p-3">Public Sector</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Other Services Sub-Tab -->
+        <div id="other" class="sub-tab-content">
+          <input type="text" id="search-other" class="w-full p-2 mb-4 border rounded-lg" placeholder="Search by name or description" oninput="filterTable('other')">
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse" id="table-other">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="p-3 text-left text-gray-700">Name</th>
+                  <th class="p-3 text-left text-gray-700">Description</th>
+                  <th class="p-3 text-left text-gray-700">Provider</th>
+                  <th class="p-3 text-left text-gray-700">Availability</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Mail Distribution</td>
+                  <td class="p-3">Bulk mail processing and delivery</td>
+                  <td class="p-3">BC Service Co</td>
+                  <td class="p-3">Ministries Only</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Facilities Management</td>
+                  <td class="p-3">Maintenance of government buildings</td>
+                  <td class="p-3">FacilityCorp</td>
+                  <td class="p-3">Ministries Only</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Data Analytics</td>
+                  <td class="p-3">Analytics for policy insights</td>
+                  <td class="p-3">Data Insights Ltd</td>
+                  <td class="p-3">Public Sector</td>
+                </tr>
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="p-3">Cybersecurity Audit</td>
+                  <td class="p-3">Comprehensive security assessments</td>
+                  <td class="p-3">SecureTech</td>
+                  <td class="p-3">Public Sector</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- FinOps KPIs Dashboard -->
+      <div id="finops-kpis" class="tab-content bg-gradient-to-r from-white to-gray-50 p-6 rounded-xl shadow-lg card">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-chart-line mr-2 text-teal-500"></i>FinOps KPIs Dashboard</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 bg-white rounded-lg shadow-sm">
+            <h3 class="font-semibold text-gray-700">Cost per Workload</h3>
+            <p class="text-gray-600">Current: $500</p>
+            <p class="text-gray-600">Target: $450</p>
+          </div>
+          <div class="p-4 bg-white rounded-lg shadow-sm">
+            <h3 class="font-semibold text-gray-700">Budget Variance</h3>
+            <p class="text-gray-600">Current: 5%</p>
+            <p class="text-gray-600">Target: <10%</p>
+          </div>
+          <div class="p-4 bg-white rounded-lg shadow-sm">
+            <h3 class="font-semibold text-gray-700">Resource Utilization</h3>
+            <p class="text-gray-600">Current: 75%</p>
+            <p class="text-gray-600">Target: >80%</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gen AI Cost Calculator -->
+      <div id="gen-ai-calculator" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-calculator mr-2 text-teal-500"></i>Gen AI Project Cost Calculator</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-gray-700 font-medium">Compute Hours (GPU):</label>
+            <input type="number" id="compute-hours" value="100" class="w-full p-2 border rounded-lg" oninput="calculateGenAICost()">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium">Storage (GB):</label>
+            <input type="number" id="storage-gb" value="1000" class="w-full p-2 border rounded-lg" oninput="calculateGenAICost()">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium">Data Preparation Cost ($):</label>
+            <input type="number" id="data-prep-cost" value="10000" class="w-full p-2 border rounded-lg" oninput="calculateGenAICost()">
+          </div>
+          <p class="text-lg text-gray-800">Estimated Cost: $<span id="gen-ai-cost" class="font-semibold">10230.00</span></p>
+        </div>
+      </div>
+
+      <!-- Cloud Cost Comparison -->
+      <div id="cloud-cost" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-cloud mr-2 text-teal-500"></i>Cloud Cost Comparison</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-gray-700 font-medium">Number of VMs/Nodes:</label>
+            <input type="number" id="vm-count" value="10" class="w-full p-2 border rounded-lg" oninput="calculateCloudCost()">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium">Duration (Months):</label>
+            <input type="number" id="months" value="12" class="w-full p-2 border rounded-lg" oninput="calculateCloudCost()">
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <p class="text-gray-800">AWS: $<span id="aws-cost" class="font-semibold">8760.00</span></p>
+            <p class="text-gray-800">Azure: $<span id="azure-cost" class="font-semibold">10512.00</span></p>
+            <p class="text-gray-800">OpenShift: $<span id="openshift-cost" class="font-semibold">13140.00</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Type Decision Tree -->
+      <div id="ai-decision" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-brain mr-2 text-teal-500"></i>AI Type Decision Tree</h2>
+        <div id="decision-tree">
+          <div id="step-0" class="decision-step active">
+            <p class="text-gray-700">Is your use case focused on creating new content (e.g., text, images)?</p>
+            <div class="space-x-4 mt-2">
+              <button class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition" onclick="answerDecision(0, 'Yes', 'contentCreation')">Yes</button>
+              <button class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition" onclick="answerDecision(0, 'No', 'contentCreation')">No</button>
+            </div>
+          </div>
+          <div id="step-1" class="decision-step">
+            <p class="text-gray-700">Do you need predictive analytics (e.g., forecasting, classification)?</p>
+            <div class="space-x-4 mt-2">
+              <button class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition" onclick="answerDecision(1, 'Yes', 'predictive')">Yes</button>
+              <button class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition" onclick="answerDecision(1, 'No', 'predictive')">No</button>
+            </div>
+          </div>
+          <div id="step-2" class="decision-step">
+            <p class="text-gray-700">Is computer vision (e.g., image recognition) required?</p>
+            <div class="space-x-4 mt-2">
+              <button class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition" onclick="answerDecision(2, 'Yes', 'vision')">Yes</button>
+              <button class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition" onclick="answerDecision(2, 'No', 'vision')">No</button>
+            </div>
+          </div>
+          <div id="decision-result" class="hidden">
+            <p class="text-gray-800">Recommended AI Type: <span id="ai-recommendation" class="font-semibold"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Microsoft Fabric Suitability Tool -->
+      <div id="fabric-tool" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-cogs mr-2 text-teal-500"></i>Microsoft Fabric Suitability Tool</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-gray-700 font-medium">Data Volume:</label>
+            <select id="data-volume" class="w-full p-2 border rounded-lg" onchange="evaluateFabric()">
+              <option value="Small">Small</option>
+              <option value="Medium">Medium</option>
+              <option value="Large">Large</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium">Analytics Type:</label>
+            <select id="analytics-type" class="w-full p-2 border rounded-lg" onchange="evaluateFabric()">
+              <option value="Batch">Batch</option>
+              <option value="Real-Time">Real-Time</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium">Requires Azure Integration:</label>
+            <select id="integration" class="w-full p-2 border rounded-lg" onchange="evaluateFabric()">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <p id="fabric-result" class="text-gray-800">Consider alternatives like Databricks or Snowflake for simpler workloads.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Main Tab Switching
+    function showMainTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active', 'fade-in');
+      });
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+      });
+      const activeTab = document.getElementById(tabId);
+      activeTab.classList.add('active', 'fade-in');
+      document.querySelector(`a[onclick="showMainTab('${tabId}')"]`).classList.add('active');
+      
+      // Reset Service Catalog sub-tabs if switching to it
+      if (tabId === 'service-catalog') {
+        showSubTab('aws');
+      }
+    }
+
+    // Service Catalog Sub-Tab Switching
+    function showSubTab(tabId) {
+      document.querySelectorAll('.sub-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.replace('bg-teal-500', 'bg-gray-200');
+        btn.classList.replace('text-white', 'text-gray-700');
+        btn.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+      const activeButton = document.querySelector(`button[onclick="showSubTab('${tabId}')"]`);
+      activeButton.classList.add('bg-teal-500', 'text-white', 'active');
+      document.getElementById(`search-${tabId}`).value = '';
+      filterTable(tabId);
+    }
+
+    // Service Catalog: Filter Table
+    function filterTable(tabId) {
+      const searchTerm = document.getElementById(`search-${tabId}`).value.toLowerCase();
+      const rows = document.querySelectorAll(`#table-${tabId} tbody tr`);
+      rows.forEach(row => {
+        const name = row.cells[0].textContent.toLowerCase();
+        const description = row.cells[1].textContent.toLowerCase();
+        row.style.display = (name.includes(searchTerm) || description.includes(searchTerm)) ? '' : 'none';
+      });
+    }
+
+    // Gen AI Cost Calculator
+    function calculateGenAICost() {
+      const computeHours = parseFloat(document.getElementById('compute-hours').value) || 0;
+      const storageGB = parseFloat(document.getElementById('storage-gb').value) || 0;
+      const dataPrepCost = parseFloat(document.getElementById('data-prep-cost').value) || 0;
+      const computeCost = computeHours * 3.5; // $3.5/hour for GPU
+      const storageCost = storageGB * 0.023; // $0.023/GB/month
+      const totalCost = computeCost + storageCost + dataPrepCost;
+      document.getElementById('gen-ai-cost').textContent = totalCost.toFixed(2);
+    }
+
+    // Cloud Cost Comparison
+    function calculateCloudCost() {
+      const vmCount = parseFloat(document.getElementById('vm-count').value) || 0;
+      const months = parseFloat(document.getElementById('months').value) || 0;
+      const awsCost = vmCount * 0.1 * 730 * months; // $0.1/hour for t3.medium
+      const azureCost = vmCount * 0.12 * 730 * months; // $0.12/hour for D2s v3
+      const openshiftCost = vmCount * 0.15 * 730 * months; // $0.15/hour for OpenShift
+      document.getElementById('aws-cost').textContent = awsCost.toFixed(2);
+      document.getElementById('azure-cost').textContent = awsCost.toFixed(2);
+      document.getElementById('openshift-cost').textContent = openshiftCost.toFixed(2);
+    }
+
+    // AI Type Decision Tree
+    let decisionAnswers = {};
+    function answerDecision(step, answer, key) {
+      decisionAnswers[key] = answer;
+      document.querySelectorAll('.decision-step').forEach(step => step.classList.remove('active'));
+      if (step < 2) {
+        document.getElementById(`step-${step + 1}`).classList.add('active');
+      } else {
+        document.getElementById('decision-result').classList.remove('hidden');
+        let recommendation = 'General Machine Learning';
+        if (decisionAnswers.contentCreation === 'Yes') {
+          recommendation = 'Generative AI (e.g., LLMs, DALL·E)';
+        } else if (decisionAnswers.predictive === 'Yes') {
+          recommendation = 'Predictive AI (e.g., regression, classification models)';
+        } else if (decisionAnswers.vision === 'Yes') {
+          recommendation = 'Computer Vision AI (e.g., CNNs)';
+        }
+        document.getElementById('ai-recommendation').textContent = recommendation;
+      }
+    }
+
+    // Microsoft Fabric Suitability Tool
+    function evaluateFabric() {
+      const dataVolume = document.getElementById('data-volume').value;
+      const analyticsType = document.getElementById('analytics-type').value;
+      const integration = document.getElementById('integration').value;
+      let result = 'Microsoft Fabric may be suitable, but evaluate Databricks for flexibility or Snowflake for data warehousing.';
+      if (dataVolume === 'Large' && analyticsType === 'Real-Time' && integration === 'Yes') {
+        result = 'Microsoft Fabric is highly suitable due to its support for large-scale, real-time analytics and Azure integration.';
+      } else if (dataVolume === 'Small' || analyticsType === 'Batch') {
+        result = 'Consider alternatives like Databricks or Snowflake for simpler workloads.';
+      }
+      document.getElementById('fabric-result').textContent = result;
+    }
+
+    // Initialize calculators
+    calculateGenAICost();
+    calculateCloudCost();
+  </script>
+</body>
+</html>

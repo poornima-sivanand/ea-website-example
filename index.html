@@ -85,32 +85,12 @@
             <table class="w-full border-collapse" id="table-aws">
               <thead>
                 <tr class="bg-gray-100">
-                  <th class="p-3 text-left text-gray-700">Name</th>
+                  <th class="p-3 text-left text-gray-700">Service Name</th>
+                  <th class="p-3 text-left text-gray-700">Category</th>
                   <th class="p-3 text-left text-gray-700">Description</th>
-                  <th class="p-3 text-left text-gray-700">Provider</th>
-                  <th class="p-3 text-left text-gray-700">Availability</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="border-b hover:bg-gray-50">
-                  <td class="p-3">EC2 Hosting</td>
-                  <td class="p-3">Scalable virtual machines for enterprise apps</td>
-                  <td class="p-3">AWS</td>
-                  <td class="p-3">Public Sector</td>
-                </tr>
-                <tr class="border-b hover:bg-gray-50">
-                  <td class="p-3">S3 Storage</td>
-                  <td class="p-3">Object storage for large datasets</td>
-                  <td class="p-3">AWS</td>
-                  <td class="p-3">Ministries Only</td>
-                </tr>
-                <tr class="border-b hover:bg-gray-50">
-                  <td class="p-3">Lambda Functions</td>
-                  <td class="p-3">Serverless compute for event-driven tasks</td>
-                  <td class="p-3">AWS</td>
-                  <td class="p-3">Public Sector</td>
-                </tr>
-              </tbody>
+              <tbody id="aws-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -127,26 +107,7 @@
                   <th class="p-3 text-left text-gray-700">Availability</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="border-b hover:bg-gray-50">
-                  <td class="p-3">Azure VMs</td>
-                  <td class="p-3">Virtual machines for cloud workloads</td>
-                  <td class="p-3">Azure</td>
-                  <td class="p-3">Public Sector</td>
-                </tr>
-                <tr class="border-b hover:bg-gray-50">
-                  <td class="p-3">Blob Storage</td>
-                  <td class="p-3">Scalable storage for unstructured data</td>
-                  <td class="p-3">Azure</td>
-                  <td class="p-3">Ministries Only</td>
-                </tr>
-                <tr class="border-b hover:bg-gray-50">
-                  <td class="p-3">Azure Functions</td>
-                  <td class="p-3">Serverless compute for microservices</td>
-                  <td class="p-3">Azure</td>
-                  <td class="p-3">Public Sector</td>
-                </tr>
-              </tbody>
+              <tbody id="azure-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -320,6 +281,65 @@
   </div>
 
   <script>
+    // Service Catalog Data (Replace with your Excel data)
+    const awsServices = [
+    { id: 1, name: 'API Gateway', category: 'Networking & Content Delivery', description: "Create, publish, and manage APIs at scale." },
+{ id: 2, name: 'Backup', category: 'Storage', description: "Centrally manage backups across AWS services." },
+{ id: 3, name: 'Bedrock', category: 'AI & Machine Learning', description: " Build and scale generative AI apps with foundation models." },
+{ id: 4, name: 'Certificate Manager', category: 'Security, Identity & Compliance', description: "Manage SSL/TLS certificates." },
+{ id: 5, name: 'Claude 3.5 Sonnet (Bedrock Edition)', category: 'AI & Machine Learning', description: "Foundation model from Anthropic for generative AI on Amazon Bedrock." },
+{ id: 6, name: 'CloudFront', category: 'Networking & Content Delivery', description: "CDN for fast, secure content delivery globally." },
+{ id: 7, name: 'CloudTrail', category: 'Security, Identity & Compliance', description: "Monitor account activity and API usage." },
+{ id: 8, name: 'CloudWatch', category: 'Monitoring & Management', description: "Observability for AWS applications and infrastructure." },
+{ id: 9, name: 'CodeBuild', category: 'Compute / DevOps Tools', description: "Build and test code automatically." },
+{ id: 10, name: 'Cognito', category: 'Security, Identity & Compliance', description: "User authentication and access control." },
+{ id: 11, name: 'Config', category: 'Security, Identity & Compliance', description: "Evaluate and audit AWS resource configurations." },
+{ id: 12, name: 'DMS (Database Migration Service)', category: 'Database', description: "Migrate on-premise or cloud databases to AWS." },
+{ id: 13, name: 'DynamoDB', category: 'Database', description: "NoSQL database for key-value and document data." },
+{ id: 14, name: 'EC2-Instances', category: 'Compute', description: "Scalable virtual servers for hosting workloads." },
+{ id: 15, name: 'EC2-Other', category: 'Compute', description: "Miscellaneous compute-related EC2 charges." },
+{ id: 16, name: 'EC2 Container Registry (ECR)', category: 'Developer Tools', description: "Docker-compatible container image registry." },
+{ id: 17, name: 'Elastic Container Service (ECS)', category: 'Compute', description: "Container orchestration for Docker containers." },
+{ id: 18, name: 'Elastic Container Service for Kubernetes (EKS)', category: 'Compute', description: "Managed Kubernetes service." },
+{ id: 19, name: 'Elastic File System (EFS)', category: 'Storage', description: "Fully managed, scalable file storage for EC2." },
+{ id: 20, name: 'Elastic Load Balancing (ELB)', category: 'Networking & Content Delivery', description: "Distribute traffic across multiple targets." },
+{ id: 21, name: 'ElastiCache', category: 'Database', description: "In-memory data store for Redis or Memcached." },
+{ id: 22, name: 'Glue', category: 'Analytics', description: "Serverless ETL service for data integration." },
+{ id: 23, name: 'GuardDuty', category: 'Security, Identity & Compliance', description: "Intelligent threat detection service." },
+{ id: 24, name: 'Kinesis', category: 'Analytics', description: "Real-time streaming data ingestion." },
+{ id: 25, name: 'Kinesis Analytics', category: 'Analytics', description: "Run SQL queries on streaming data." },
+{ id: 26, name: 'Kinesis Firehose', category: 'Analytics', description: "Load streaming data to storage and analytics services." },
+{ id: 27, name: 'Key Management Service (KMS)', category: 'Security, Identity & Compliance', description: "Create and manage encryption keys." },
+{ id: 28, name: 'Lambda', category: 'Compute', description: "Run code without provisioning or managing servers." },
+{ id: 29, name: 'Macie', category: 'Security, Identity & Compliance', description: "Discover and protect sensitive data using ML." },
+{ id: 30, name: 'Managed Streaming for Apache Kafka', category: 'Application Integration', description: "Fully managed Apache Kafka." },
+{ id: 31, name: 'MQ', category: 'Application Integration', description: "Managed ActiveMQ and RabbitMQ." },
+{ id: 32, name: 'OpenSearch Service', category: 'Analytics', description: "Log analytics, full-text search, and monitoring." },
+{ id: 33, name: 'QuickSight', category: 'Analytics', description: "Business intelligence with dashboards and reports." },
+{ id: 34, name: 'Redshift', category: 'Database', description: "Managed data warehouse for analytical queries." },
+{ id: 35, name: 'Relational Database Service (RDS)', category: 'Database', description: "Managed relational databases (MySQL, PostgreSQL, SQL Server, etc.)." },
+{ id: 36, name: 'Route 53', category: 'Networking & Content Delivery', description: "Scalable domain name system (DNS) service." },
+{ id: 37, name: 'Savings Plans for Compute usage', category: 'Monitoring & Management', description: "Flexible pricing for consistent compute usage." },
+{ id: 38, name: 'S3', category: 'Storage', description: "Scalable object storage for backups, archiving, and more." },
+{ id: 39, name: 'Secrets Manager', category: 'Security, Identity & Compliance', description: "Secure storage of credentials and secrets." },
+{ id: 40, name: 'Security Hub', category: 'Security, Identity & Compliance', description: "Centralized security and compliance insights." },
+{ id: 41, name: 'SES (Simple Email Service)', category: 'Messaging & Email', description: "Send transactional and bulk email." },
+{ id: 42, name: 'SNS (Simple Notification Service)', category: 'Application Integration', description: "Pub/sub messaging and mobile push notifications." },
+{ id: 43, name: 'SQS (Simple Queue Service)', category: 'Application Integration', description: "Managed message queuing service." },
+{ id: 44, name: 'Textract', category: 'AI & Machine Learning', description: "Extract text and tables from scanned documents using AI." },
+{ id: 45, name: 'Transfer Family', category: 'Networking & Content Delivery', description: "SFTP, FTP, FTPS support for file transfer to/from AWS." },
+{ id: 46, name: 'VPC', category: 'Networking & Content Delivery', description: "Virtual network for launching AWS resources in isolation." },
+{ id: 47, name: 'WAF', category: 'Security, Identity & Compliance', description: "Protect web apps from common threats (SQLi, XSS, etc.)." }
+      // Add your AWS services here
+    ];
+
+    const azureServices = [
+      { id: 1, name: 'Azure VMs', description: 'Virtual machines for cloud workloads', provider: 'Azure', availability: 'Public Sector' },
+      { id: 2, name: 'Blob Storage', description: 'Scalable storage for unstructured data', provider: 'Azure', availability: 'Ministries Only' },
+      { id: 3, name: 'Azure Functions', description: 'Serverless compute for microservices', provider: 'Azure', availability: 'Public Sector' }
+      // Add your Azure services here
+    ];
+
     // Main Tab Switching
     function showMainTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(tab => {
@@ -352,7 +372,35 @@
       const activeButton = document.querySelector(`button[onclick="showSubTab('${tabId}')"]`);
       activeButton.classList.add('bg-teal-500', 'text-white', 'active');
       document.getElementById(`search-${tabId}`).value = '';
-      filterTable(tabId);
+      renderTable(tabId);
+    }
+
+    // Render Table Dynamically
+    function renderTable(tabId) {
+      let services;
+      if (tabId === 'aws') {
+        services = awsServices;
+      } else if (tabId === 'azure') {
+        services = azureServices;
+      } else {
+        return; // Other tab is static
+      }
+
+      const tbody = document.getElementById(`${tabId}-tbody`);
+      tbody.innerHTML = '';
+      services.forEach(service => {
+        const row = document.createElement('tr');
+        row.className = 'border-b hover:bg-gray-50';
+        row.innerHTML = `
+          <td class="p-3">${service.name}</td>
+          <td class="p-3">${service.description}</td>
+          <td class="p-3">${service.provider}</td>
+          <td class="p-3">${service.availability}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      filterTable(tabId); // Apply any existing search filter
     }
 
     // Service Catalog: Filter Table
@@ -385,7 +433,7 @@
       const azureCost = vmCount * 0.12 * 730 * months; // $0.12/hour for D2s v3
       const openshiftCost = vmCount * 0.15 * 730 * months; // $0.15/hour for OpenShift
       document.getElementById('aws-cost').textContent = awsCost.toFixed(2);
-      document.getElementById('azure-cost').textContent = awsCost.toFixed(2);
+      document.getElementById('azure-cost').textContent = azureCost.toFixed(2);
       document.getElementById('openshift-cost').textContent = openshiftCost.toFixed(2);
     }
 
@@ -424,9 +472,18 @@
       document.getElementById('fabric-result').textContent = result;
     }
 
-    // Initialize calculators
-    calculateGenAICost();
-    calculateCloudCost();
+    // Initialize Service Catalog Tables
+    function initializeTables() {
+      renderTable('aws');
+      renderTable('azure');
+    }
+
+    // Run initialization
+    window.onload = () => {
+      initializeTables();
+      calculateGenAICost();
+      calculateCloudCost();
+    };
   </script>
 </body>
 </html>

@@ -155,27 +155,20 @@
         </div>
       </div>
 
-      <!-- FinOps KPIs Dashboard -->
-      <div id="finops-kpis" class="tab-content bg-gradient-to-r from-white to-gray-50 p-6 rounded-xl shadow-lg card">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-chart-line mr-2 text-teal-500"></i>FinOps KPIs Dashboard</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="p-4 bg-white rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-700">Cost per Workload</h3>
-            <p class="text-gray-600">Current: $500</p>
-            <p class="text-gray-600">Target: $450</p>
-          </div>
-          <div class="p-4 bg-white rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-700">Budget Variance</h3>
-            <p class="text-gray-600">Current: 5%</p>
-            <p class="text-gray-600">Target: <10%</p>
-          </div>
-          <div class="p-4 bg-white rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-700">Resource Utilization</h3>
-            <p class="text-gray-600">Current: 75%</p>
-            <p class="text-gray-600">Target: >80%</p>
-          </div>
-        </div>
-      </div>
+     <!-- FinOps KPIs Dashboard -->
+<div id="finops-kpis" class="tab-content bg-gradient-to-r from-white to-gray-50 p-6 rounded-xl shadow-lg card">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-chart-line mr-2 text-teal-500"></i>FinOps KPIs Dashboard</h2>
+    <!-- General FinOps KPIs -->
+    <h3 class="text-xl font-semibold mb-4 text-gray-700">General FinOps KPIs</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <!-- Dynamically populated by JavaScript -->
+    </div>
+    <!-- Gen AI FinOps KPIs -->
+    <h3 class="text-xl font-semibold mb-4 text-gray-700">FinOps KPIs for Gen AI</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Dynamically populated by JavaScript -->
+    </div>
+  </div>
 
       <!-- Gen AI Cost Calculator -->
       <div id="gen-ai-calculator" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
@@ -341,22 +334,27 @@
     ];
 
     // Main Tab Switching
-    function showMainTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active', 'fade-in');
-      });
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-      });
-      const activeTab = document.getElementById(tabId);
-      activeTab.classList.add('active', 'fade-in');
-      document.querySelector(`a[onclick="showMainTab('${tabId}')"]`).classList.add('active');
-      
-      // Reset Service Catalog sub-tabs if switching to it
-      if (tabId === 'service-catalog') {
-        showSubTab('aws');
-      }
-    }
+    // Main Tab Switching
+function showMainTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active', 'fade-in');
+  });
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+  });
+  const activeTab = document.getElementById(tabId);
+  activeTab.classList.add('active', 'fade-in');
+  document.querySelector(`a[onclick="showMainTab('${tabId}')"]`).classList.add('active');
+  
+  // Reset Service Catalog sub-tabs if switching to it
+  if (tabId === 'service-catalog') {
+    showSubTab('aws');
+  }
+  // Render KPIs if switching to FinOps KPIs
+  if (tabId === 'finops-kpis') {
+    renderKpis();
+  }
+}
 
     // Service Catalog Sub-Tab Switching
     function showSubTab(tabId) {
@@ -471,18 +469,77 @@
       document.getElementById('fabric-result').textContent = result;
     }
 
-    // Initialize Service Catalog Tables
-    function initializeTables() {
-      renderTable('aws');
-      renderTable('azure');
-    }
+    // Initialize
+function initialize() {
+  initializeTables();
+  renderKpis();
+  calculateGenAICost();
+  calculateCloudCost();
+}
 
-    // Run initialization
-    window.onload = () => {
-      initializeTables();
-      calculateGenAICost();
-      calculateCloudCost();
-    };
+// Initialize Service Catalog Tables
+function initializeTables() {
+  renderTable('aws');
+  renderTable('azure');
+}
+
+// Run initialization
+window.onload = initialize;
+    // FinOps KPIs Data
+const generalKpis = [
+  { name: 'Cost per Workload', description: 'Measures cost efficiency of individual workloads', current: '$500', target: '$450' },
+  { name: 'Budget Variance', description: 'Tracks deviation from planned budget', current: '5%', target: '<10%' },
+  { name: 'Forecast Accuracy', description: 'Measures how close cost forecasts are to actuals', current: '85%', target: '>90%' },
+  { name: 'Resource Utilization', description: 'Percentage of provisioned resources actively used', current: '75%', target: '>80%' },
+  { name: 'Savings from Optimization', description: 'Cost savings from optimization actions', current: '$10,000', target: '$15,000' },
+  { name: 'Discount Coverage', description: 'Percentage of spend covered by discounts', current: '60%', target: '>70%' },
+  { name: 'Chargeback/Showback Coverage', description: 'Percentage of costs allocated to business units', current: '90%', target: '>95%' },
+  { name: 'Policy Compliance', description: 'Percentage of resources compliant with cost policies', current: '88%', target: '>95%' }
+];
+
+const genAiKpis = [
+  { name: 'Cost per Inference', description: 'Cost for a single AI model inference', current: '$0.05', target: '$0.03' },
+  { name: 'Inference Efficiency', description: 'Operational efficiency of deployed AI models', current: '80%', target: '>85%' },
+  { name: 'Training Cost per Model', description: 'Cost to train or fine-tune a model', current: '$5,000', target: '$4,000' },
+  { name: 'GPU Utilization', description: 'Percentage of GPU capacity used', current: '90%', target: '100%' },
+  { name: 'Cost per Engagement', description: 'Cost per AI-driven interaction (e.g., chatbot)', current: '$0.10', target: '$0.08' },
+  { name: 'Chatbot Response Time', description: 'Time from user input to response', current: '2s', target: '<1.5s' },
+  { name: 'Resolution Rate', description: 'Percentage of AI interactions resolving queries', current: '70%', target: '>80%' },
+  { name: 'Cost per Conversion', description: 'Cost per successful business outcome', current: '$2.00', target: '$1.50' }
+];
+function renderKpis() {
+    // General KPIs
+    const generalKpisContainer = document.querySelector('#finops-kpis .grid:nth-of-type(1)');
+    generalKpisContainer.innerHTML = '';
+    generalKpis.forEach(kpi => {
+      const div = document.createElement('div');
+      div.className = 'p-4 bg-white rounded-lg shadow-sm';
+      div.innerHTML = `
+        <h3 class="font-semibold text-gray-700">${kpi.name}</h3>
+        <p class="text-gray-600 text-sm">${kpi.description}</p>
+        <p class="text-gray-600">Current: ${kpi.current}</p>
+        <p class="text-gray-600">Target: ${kpi.target}</p>
+      `;
+      generalKpisContainer.appendChild(div);
+    });
+  
+    // Gen AI KPIs
+    const genAiKpisContainer = document.querySelector('#finops-kpis .grid:nth-of-type(2)');
+    genAiKpisContainer.innerHTML = '';
+    genAiKpis.forEach(kpi => {
+      const div = document.createElement('div');
+      div.className = 'p-4 bg-white rounded-lg shadow-sm';
+      div.innerHTML = `
+        <h3 class="font-semibold text-gray-700">${kpi.name}</h3>
+        <p class="text-gray-600 text-sm">${kpi.description}</p>
+        <p class="text-gray-600">Current: ${kpi.current}</p>
+        <p class="text-gray-600">Target: ${kpi.target}</p>
+      `;
+      genAiKpisContainer.appendChild(div);
+    });
+  }
   </script>
+  // Render FinOps KPIs
+
 </body>
 </html>

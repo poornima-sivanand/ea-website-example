@@ -283,7 +283,7 @@
   <script>
     // Service Catalog Data (Replace with your Excel data)
     const awsServices = [
-    { id: 1, name: 'API Gateway', category: 'Networking & Content Delivery', description: "Create, publish, and manage APIs at scale." },
+{ id: 1, name: 'API Gateway', category: 'Networking & Content Delivery', description: "Create, publish, and manage APIs at scale." },
 { id: 2, name: 'Backup', category: 'Storage', description: "Centrally manage backups across AWS services." },
 { id: 3, name: 'Bedrock', category: 'AI & Machine Learning', description: " Build and scale generative AI apps with foundation models." },
 { id: 4, name: 'Certificate Manager', category: 'Security, Identity & Compliance', description: "Manage SSL/TLS certificates." },
@@ -393,9 +393,8 @@
         row.className = 'border-b hover:bg-gray-50';
         row.innerHTML = `
           <td class="p-3">${service.name}</td>
+          <td class="p-3">${service.category}</td>
           <td class="p-3">${service.description}</td>
-          <td class="p-3">${service.provider}</td>
-          <td class="p-3">${service.availability}</td>
         `;
         tbody.appendChild(row);
       });

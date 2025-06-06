@@ -62,6 +62,7 @@
       <a href="#ai-decision" class="nav-link px-4 py-2 rounded" onclick="showMainTab('ai-decision')">AI Decision Tree</a>
       <a href="#fabric-tool" class="nav-link px-4 py-2 rounded" onclick="showMainTab('fabric-tool')">Fabric Tool</a>
       <a href="trends.html" class="nav-link px-4 py-2 rounded" onclick="navigateTo('trends.html')">Trends</a>
+      <a href="analysis.html" class="nav-link px-4 py-2 rounded" onclick="navigateTo('analysis.html')">Solution Architecture</a>
     </div>
   </nav>
 
@@ -159,6 +160,7 @@
      <!-- FinOps KPIs Dashboard -->
 <div id="finops-kpis" class="tab-content bg-gradient-to-r from-white to-gray-50 p-6 rounded-xl shadow-lg card">
     <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-chart-line mr-2 text-teal-500"></i>FinOps KPIs Dashboard</h2>
+    <h3 class="text-2xl font-bold mb-4 text-gray-800">This is only an example - WIP</h3>
     <!-- General FinOps KPIs -->
     <h3 class="text-xl font-semibold mb-4 text-gray-700">General FinOps KPIs</h3>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -174,6 +176,7 @@
       <!-- Gen AI Cost Calculator -->
       <div id="gen-ai-calculator" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
         <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-calculator mr-2 text-teal-500"></i>Gen AI Project Cost Calculator</h2>
+        <h3 class="text-2xl font-bold mb-4 text-gray-800">This is only an example - WIP</h3>
         <div class="space-y-4">
           <div>
             <label class="block text-gray-700 font-medium">Compute Hours (GPU):</label>
@@ -194,6 +197,7 @@
       <!-- Cloud Cost Comparison -->
       <div id="cloud-cost" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
         <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-cloud mr-2 text-teal-500"></i>Cloud Cost Comparison</h2>
+        <h3 class="text-2xl font-bold mb-4 text-gray-800">This is only an example - WIP</h3>
         <div class="space-y-4">
           <div>
             <label class="block text-gray-700 font-medium">Number of VMs/Nodes:</label>
@@ -214,6 +218,7 @@
       <!-- AI Type Decision Tree -->
       <div id="ai-decision" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
         <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-brain mr-2 text-teal-500"></i>AI Type Decision Tree</h2>
+        <h3 class="text-2xl font-bold mb-4 text-gray-800">This is only an example - WIP</h3>
         <div id="decision-tree">
           <div id="step-0" class="decision-step active">
             <p class="text-gray-700">Is your use case focused on creating new content (e.g., text, images)?</p>
@@ -245,6 +250,7 @@
       <!-- Microsoft Fabric Suitability Tool -->
       <div id="fabric-tool" class="tab-content bg-white p-6 rounded-xl shadow-lg card">
         <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-cogs mr-2 text-teal-500"></i>Microsoft Fabric Suitability Tool</h2>
+        <h3 class="text-2xl font-bold mb-4 text-gray-800">This is only an example - WIP</h3>
         <div class="space-y-4">
           <div>
             <label class="block text-gray-700 font-medium">Data Volume:</label>
@@ -327,12 +333,255 @@
       // Add your AWS services here
     ];
 
-    const azureServices = [
-      { id: 1, name: 'Azure VMs', description: 'Virtual machines for cloud workloads', provider: 'Azure', availability: 'Public Sector' },
-      { id: 2, name: 'Blob Storage', description: 'Scalable storage for unstructured data', provider: 'Azure', availability: 'Ministries Only' },
-      { id: 3, name: 'Azure Functions', description: 'Serverless compute for microservices', provider: 'Azure', availability: 'Public Sector' }
-      // Add your Azure services here
-    ];
+    const azureServices = 
+    [
+  {
+    "id": 1,
+    "name": "Microsoft Sentinel",
+    "category": "Security",
+    "description": "A cloud-native SIEM and SOAR solution that provides intelligent security analytics and threat intelligence across the enterprise."
+  },
+  {
+    "id": 2,
+    "name": "Azure Arc",
+    "category": "Hybrid",
+    "description": "Extends Azure management and services to any infrastructure, enabling consistent management across on-premises, multi-cloud, and edge environments."
+  },
+  {
+    "id": 3,
+    "name": "Virtual Machines",
+    "category": "Compute",
+    "description": "Provides on-demand, scalable computing resources with support for various operating systems and configurations."
+  },
+  {
+    "id": 4,
+    "name": "Cognitive Services",
+    "category": "AI + Machine Learning",
+    "description": "A collection of APIs and services that enable developers to add intelligent features such as vision, speech, language, and decision-making to applications."
+  },
+  {
+    "id": 5,
+    "name": "Microsoft Defender for Cloud",
+    "category": "Security",
+    "description": "Provides unified security management and advanced threat protection across hybrid cloud workloads."
+  },
+  {
+    "id": 6,
+    "name": "Azure DevOps",
+    "category": "DevOps",
+    "description": "A suite of development tools for software teams to plan work, collaborate on code development, and build and deploy applications."
+  },
+  {
+    "id": 7,
+    "name": "Azure Data Explorer",
+    "category": "Analytics",
+    "description": "A fast and highly scalable data exploration service for log and telemetry data."
+  },
+  {
+    "id": 8,
+    "name": "Azure Bastion",
+    "category": "Networking",
+    "description": "Provides secure and seamless RDP and SSH access to virtual machines directly through the Azure portal without exposing them to public internet."
+  },
+  {
+    "id": 9,
+    "name": "Azure Cognitive Search",
+    "category": "AI + Machine Learning",
+    "description": "A cloud search service that provides indexing and querying capabilities for client applications."
+  },
+  {
+    "id": 10,
+    "name": "Azure Firewall",
+    "category": "Security",
+    "description": "A managed, cloud-based network security service that protects Azure Virtual Network resources with built-in high availability and scalability."
+  },
+  {
+    "id": 11,
+    "name": "Virtual Network",
+    "category": "Networking",
+    "description": "Provides an isolated and secure environment to run virtual machines and applications."
+  },
+  {
+    "id": 12,
+    "name": "Azure Databricks",
+    "category": "Analytics",
+    "description": "An Apache Spark-based analytics platform optimized for Azure, designed for big data and machine learning workloads."
+  },
+  {
+    "id": 13,
+    "name": "Application Gateway",
+    "category": "Networking",
+    "description": "A web traffic load balancer that enables you to manage traffic to your web applications."
+  },
+  {
+    "id": 14,
+    "name": "Storage",
+    "category": "Storage",
+    "description": "Provides scalable cloud storage for data objects, files, disks, and queues."
+  },
+  {
+    "id": 15,
+    "name": "Virtual WAN",
+    "category": "Networking",
+    "description": "A networking service that provides optimized and automated branch connectivity to Azure."
+  },
+  {
+    "id": 16,
+    "name": "Power BI Embedded",
+    "category": "Analytics",
+    "description": "Allows developers to embed Power BI dashboards and reports into applications."
+  },
+  {
+    "id": 17,
+    "name": "Azure App Service",
+    "category": "Compute",
+    "description": "A fully managed platform for building, deploying, and scaling web apps."
+  },
+  {
+    "id": 18,
+    "name": "Microsoft Fabric",
+    "category": "Analytics",
+    "description": "An end-to-end, unified analytics platform that brings together data integration, data engineering, and business intelligence."
+  },
+  {
+    "id": 19,
+    "name": "Azure DNS",
+    "category": "Networking",
+    "description": "Hosts your DNS domains in Azure, providing name resolution using Microsoft Azure infrastructure."
+  },
+  {
+    "id": 20,
+    "name": "Log Analytics",
+    "category": "Monitoring",
+    "description": "Collects and analyzes data generated by resources in your cloud and on-premises environments."
+  },
+  {
+    "id": 21,
+    "name": "Azure Database for PostgreSQL",
+    "category": "Databases",
+    "description": "A managed database service for app development and deployment using PostgreSQL."
+  },
+  {
+    "id": 22,
+    "name": "Azure Applied AI Services",
+    "category": "AI + Machine Learning",
+    "description": "Provides AI services that combine Azure Cognitive Services with task-specific AI and business logic."
+  },
+  {
+    "id": 23,
+    "name": "Azure Firewall Manager",
+    "category": "Security",
+    "description": "A security management service that provides central security policy and route management for cloud-based security perimeters."
+  },
+  {
+    "id": 24,
+    "name": "Azure Data Factory v2",
+    "category": "Data Integration",
+    "description": "A cloud-based data integration service that allows you to create data-driven workflows for orchestrating data movement and transformation."
+  },
+  {
+    "id": 25,
+    "name": "Container Registry",
+    "category": "Containers",
+    "description": "Stores and manages private Docker container images, enabling fast and scalable deployment."
+  },
+  {
+    "id": 26,
+    "name": "Functions",
+    "category": "Compute",
+    "description": "An event-driven, serverless compute service that enables you to run code on-demand without having to manage infrastructure."
+  },
+  {
+    "id": 27,
+    "name": "Load Balancer",
+    "category": "Networking",
+    "description": "Distributes incoming network traffic across multiple targets, such as virtual machines, to ensure high availability and reliability."
+  },
+  {
+    "id": 28,
+    "name": "NAT Gateway",
+    "category": "Networking",
+    "description": "Provides outbound internet connectivity for virtual networks, allowing resources to connect to the internet securely."
+  },
+  {
+    "id": 29,
+    "name": "Event Grid",
+    "category": "Integration",
+    "description": "A fully managed event routing service that enables you to build event-based architectures."
+  },
+  {
+    "id": 30,
+    "name": "Azure Cosmos DB",
+    "category": "Databases",
+    "description": "A globally distributed, multi-model database service designed for mission-critical applications."
+  },
+  {
+    "id": 31,
+    "name": "API Management",
+    "category": "Integration",
+    "description": "Helps organizations publish APIs to external, partner, and internal developers to unlock the potential of their data and services."
+  },
+  {
+    "id": 32,
+    "name": "Event Hubs",
+    "category": "Integration",
+    "description": "A big data streaming platform and event ingestion service capable of receiving and processing millions of events per second."
+  },
+  {
+    "id": 33,
+    "name": "SQL Database",
+    "category": "Databases",
+    "description": "A fully managed relational database with built-in intelligence supporting self-driving features such as performance tuning and threat alerts."
+  },
+  {
+    "id": 34,
+    "name": "Azure Monitor",
+    "category": "Monitoring",
+    "description": "Provides full-stack monitoring, advanced analytics, and intelligent insights for your applications and infrastructure."
+  },
+  {
+    "id": 35,
+    "name": "Automation",
+    "category": "Management",
+    "description": "Automates frequent, time-consuming, and error-prone cloud management tasks."
+  },
+  {
+    "id": 36,
+    "name": "Bandwidth",
+    "category": "Networking",
+    "description": "Refers to the data transfer capacity of your network connections within Azure."
+  },
+  {
+    "id": 37,
+    "name": "Key Vault",
+    "category": "Security",
+    "description": "Safeguards cryptographic keys and secrets used by cloud applications and services."
+  },
+  {
+    "id": 38,
+    "name": "Logic Apps",
+    "category": "Integration",
+    "description": "Helps you automate workflows and integrate apps, data, services, and systems across enterprises or organizations."
+  },
+  {
+    "id": 39,
+    "name": "Azure Policy",
+    "category": "Governance",
+    "description": "Enables you to create, assign, and manage policies to enforce rules and effects on your resources."
+  },
+  {
+    "id": 40,
+    "name": "Azure Update Manager",
+    "category": "Management",
+    "description": "Manages operating system updates for your Windows and Linux machines across Azure and on-premises environments."
+  },
+  {
+    "id": 41,
+    "name": "Service Bus",
+    "category": "Integration",
+    "description": "A messaging service that enables reliable communication between distributed applications and services."
+  }
+]
 
     // Main Tab Switching
     // Main Tab Switching

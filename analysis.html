@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solution Architecture Analysis - WIP</title>
+  <!-- Try CDN first, fallback to local -->
+  <script src="https://cdn.tailwindcss.com" onerror="document.write('<script src=assets/tailwind.min.js></script>')"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onerror="this.href='assets/fontawesome.min.css'">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" onerror="this.src='assets/chart.umd.min.js'"></script>
+  <style>
+    .card { transition: all 0.3s ease-in-out; }
+    .card:hover { transform: translateY(-5px); }
+    .fade-in { animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    /* Fallback styles if Tailwind fails */
+    body { background-color: #F3F4F6; font-family: Arial, sans-serif; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .nav { background-color: #1F2937; color: white; padding: 1rem; position: sticky; top: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .card { background-color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  </style>
+  <script>
+    // Suppress Tailwind CDN warning
+    const originalWarn = console.warn;
+    console.warn = function (...args) {
+      if (args[0]?.includes('cdn.tailwindcss.com should not be used in production')) return;
+      originalWarn.apply(console, args);
+    };
+    // Log CDN load status
+    window.addEventListener('load', () => {
+      console.log('CDN Status: TailwindCSS loaded:', !!window.tailwind, 'FontAwesome loaded:', document.querySelector('i.fa-cogs')?.classList.contains('fa'), 'Chart.js loaded:', !!window.Chart);
+    });
+  </script>
+</head>
+<body class="bg-gray-100">
+  <nav class="nav bg-gray-800">
+    <div class="container mx-auto flex justify-center space-x-4">
+      <a href="index.html" class="nav-link px-4 py-2 rounded hover:bg-gray-700" onclick="navigateTo('index.html')">Dashboard</a>
+      <a href="trends.html" class="nav-link px-4 py-2 rounded hover:bg-gray-700" onclick="navigateTo('trends.html')">Trends</a>
+      <a href="analysis.html" class="nav-link px-4 py-2 rounded bg-gray-700 active" onclick="navigateTo('analysis.html')">Analysis</a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto py-8">
+    <div class="card bg-white p-6 rounded-xl shadow-lg fade-in">
+      <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-cogs mr-2 text-teal-500"></i>Solution Architecture Analysis - WIP</h2>
+      <div class="mb-6">
+        <label for="checklist-select" class="block text-lg font-semibold mb-2 text-gray-700">Select Checklist</label>
+        <select id="checklist-select" class="w-full p-2 border rounded-lg">
+          <option value="llm">LLM Implementation</option>
+        </select>
+      </div>
+      <form id="analysis-form" class="space-y-4">
+        <p id="form-fallback" class="text-red-500 hidden">Form failed to load. Check console for errors.</p>
+        <!-- Static fallback form -->
+        <div id="static-form-fallback" class="hidden">
+          <p class="text-red-500">Dynamic form failed to load. Use this basic form or check console.</p>
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-1">Primary use case for the LLM?</label>
+            <select class="w-full p-2 border rounded-lg">
+              <option>Chatbot</option>
+              <option>Content Generation</option>
+              <option>Code Completion</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <button id="submit-btn" class="mt-4 bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600">Analyze</button>
+      <div id="results" class="mt-6 hidden">
+        <h3 class="text-lg font-semibold mb-2 text-gray-700">Recommendations</h3>
+        <div id="recommendations" class="p-4 bg-gray-50 rounded-lg mb-4"></div>
+        <h3 class="text-lg font-semibold mb-2 text-gray-700">Cost Estimate</h3>
+        <canvas id="cost-chart" class="mb-4"></canvas>
+        <button id="download-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" disabled title="PDF download unavailable">Download Report</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Checklist definitions
+    const checklists = {
+      llm: {
+        id: 'llm',
+        name: 'LLM Implementation',
+        questions: [
+          { id: 'useCase', prompt: 'Primary use case for the LLM?', type: 'select', options: ['Chatbot', 'Content Generation', 'Code Completion', 'Other'] },
+          { id: 'inputType', prompt: 'Expected input data type?', type: 'select', options: ['Text', 'Structured Data', 'Multimodal'] },
+          { id: 'outputFormat', prompt: 'Desired output format?', type: 'select', options: ['Text', 'JSON', 'Embeddings'] },
+          { id: 'latency', prompt: 'Latency requirements (ms)?', type: 'number', placeholder: 'e.g., 500' },
+          { id: 'volume', prompt: 'Expected request volume per hour?', type: 'number', placeholder: 'e.g., 1000' },
+          { id: 'modelType', prompt: 'Pre-trained or fine-tuned model?', type: 'select', options: ['Pre-trained', 'Fine-tuned'] },
+          { id: 'domain', prompt: 'Domain-specific requirements?', type: 'text', placeholder: 'e.g., Medical, Legal' },
+          { id: 'modelSize', prompt: 'Maximum model size (parameters)?', type: 'select', options: ['<7B', '<70B', '>70B'] },
+          { id: 'compliance', prompt: 'Ethical/compliance constraints?', type: 'checkbox', options: ['GDPR', 'HIPAA', 'Bias Mitigation'] },
+          { id: 'modelSource', prompt: 'Open-source or proprietary?', type: 'select', options: ['Open-source', 'Proprietary'] },
+          { id: 'deployment', prompt: 'Preferred deployment environment?', type: 'select', options: ['Cloud', 'On-premises', 'Hybrid'] },
+          { id: 'cloudProvider', prompt: 'Preferred cloud providers?', type: 'checkbox', options: ['AWS', 'Azure', 'GCP', 'None'] },
+          { id: 'orchestration', prompt: 'Require containerization/orchestration?', type: 'select', options: ['None', 'Docker', 'Kubernetes'] },
+          { id: 'serving', prompt: 'Preferred serving framework?', type: 'select', options: ['KServe', 'BentoML', 'Custom'] },
+          { id: 'integration', prompt: 'Integration needs with existing systems?', type: 'text', placeholder: 'e.g., CRM, ERP' },
+          { id: 'budget', prompt: 'Monthly hosting budget ($)?', type: 'number', placeholder: 'e.g., 1000' },
+          { id: 'developers', prompt: 'Number of developers?', type: 'number', placeholder: 'e.g., 3' },
+          { id: 'timeline', prompt: 'Development timeline (months)?', type: 'number', placeholder: 'e.g., 6' },
+          { id: 'autoscaling', prompt: 'Need autoscaling for inference?', type: 'select', options: ['Yes', 'No'] },
+          { id: 'licensing', prompt: 'Expect licensing costs?', type: 'select', options: ['Yes', 'No'] }
+        ]
+      }
+    };
+
+    // Cost data
+    const costData = {
+      aws: { ec2: 0.1, bedrock: 0.01 },
+      azure: { vm: 0.12, openai: 0.015 },
+      gcp: { compute: 0.11, vertex: 0.02 },
+      developer: 100
+    };
+
+    // Initialize form
+    function initializeForm() {
+      try {
+        console.log('Initializing form at 01:41:00 PM PDT, June 06, 2025');
+        const form = document.getElementById('analysis-form');
+        const checklistSelect = document.getElementById('checklist-select');
+        if (!form || !checklistSelect) {
+          document.getElementById('static-form-fallback').classList.remove('hidden');
+          throw new Error(`Form: ${!!form}, Checklist: ${!!checklistSelect}`);
+        }
+        checklistSelect.addEventListener('change', () => {
+          console.log('Checklist changed to:', checklistSelect.value);
+          populateQuestions(checklistSelect.value);
+        });
+        populateQuestions('llm');
+        document.getElementById('form-fallback').classList.add('hidden');
+        console.log('Form initialized with', checklists.llm.questions.length, 'questions');
+      } catch (error) {
+        document.getElementById('form-fallback').classList.remove('hidden');
+        document.getElementById('static-form-fallback').classList.remove('hidden');
+        console.error('Error initializing form:', error.message, error.stack);
+      }
+    }
+
+    // Populate questions
+    function populateQuestions(checklistId) {
+      try {
+        console.log('Populating questions for:', checklistId);
+        const form = document.getElementById('analysis-form');
+        const checklist = checklists[checklistId];
+        if (!form || !checklist) throw new Error(`Form: ${!!form}, Checklist: ${!!checklist}`);
+        form.innerHTML = '<p id="form-fallback" class="text-red-500 hidden">Form failed to load. Check console for errors.</p>';
+        checklist.questions.forEach(q => {
+          const div = document.createElement('div');
+          div.className = 'mb-4';
+          let inputHtml = `<label class="block text-gray-700 mb-1">${q.prompt}</label>`;
+          if (q.type === 'select') {
+            inputHtml += `<select id="${q.id}" class="w-full p-2 border rounded-lg">`;
+            q.options.forEach(opt => inputHtml += `<option value="${opt}">${opt}</option>`);
+            inputHtml += '</select>';
+          } else if (q.type === 'checkbox') {
+            q.options.forEach(opt => {
+              inputHtml += `
+                <label class="inline-flex items-center mr-4">
+                  <input type="checkbox" id="${q.id}-${opt}" value="${opt}" class="mr-1">
+                  ${opt}
+                </label>`;
+            });
+          } else {
+            inputHtml += `<input id="${q.id}" type="${q.type}" placeholder="${q.placeholder || ''}" class="w-full p-2 border rounded-lg">`;
+          }
+          div.innerHTML = inputHtml;
+          form.appendChild(div);
+        });
+        console.log(`Populated ${checklist.questions.length} questions`);
+      } catch (error) {
+        document.getElementById('form-fallback').classList.remove('hidden');
+        console.error('Error populating questions:', error.message, error.stack);
+      }
+    }
+
+    // Analyze responses
+    function analyzeResponses() {
+      try {
+        console.log('Analyzing responses');
+        const form = document.getElementById('analysis-form');
+        const responses = {};
+        checklists.llm.questions.forEach(q => {
+          if (q.type === 'checkbox') {
+            responses[q.id] = [];
+            q.options.forEach(opt => {
+              const el = document.getElementById(`${q.id}-${opt}`);
+              if (el && el.checked) responses[q.id].push(opt);
+            });
+          } else {
+            const el = document.getElementById(q.id);
+            responses[q.id] = el ? el.value : '';
+          }
+        });
+
+        let recommendations = {
+          model: 'OpenAI GPT-4',
+          platform: 'Azure',
+          serving: 'KServe',
+          orchestration: 'Kubernetes'
+        };
+        if (responses.useCase === 'Chatbot' && responses.latency <= 500) {
+          recommendations.model = 'OpenAI GPT-4';
+          recommendations.platform = 'Azure';
+        } else if (responses.modelSource === 'Open-source') {
+          recommendations.model = 'LLaMA 13B';
+          recommendations.platform = 'AWS';
+          recommendations.serving = 'BentoML';
+        }
+        if (responses.compliance?.includes('HIPAA')) {
+          recommendations.platform = 'AWS (HIPAA-compliant)';
+        }
+
+        const hoursPerMonth = 730;
+        const hostingCost = responses.cloudProvider?.includes('AWS')
+          ? (costData.aws.ec2 * hoursPerMonth) + (costData.aws.bedrock * (responses.volume || 0) * 1000)
+          : responses.cloudProvider?.includes('Azure')
+          ? (costData.azure.vm * hoursPerMonth) + (costData.azure.openai * (responses.volume || 0) * 1000)
+          : costData.gcp.compute * hoursPerMonth;
+        const teamCost = (responses.developers || 0) * (responses.timeline || 0) * 160 * costData.developer;
+        const totalCost = hostingCost + teamCost;
+
+        displayResults(recommendations, { hosting: hostingCost, team: teamCost, total: totalCost });
+        console.log('Analysis complete:', { hostingCost, teamCost, totalCost });
+      } catch (error) {
+        console.error('Error analyzing responses:', error.message, error.stack);
+      }
+    }
+
+    // Display results
+    function displayResults(recommendations, costs) {
+      try {
+        console.log('Displaying results');
+        const recommendationsDiv = document.getElementById('recommendations');
+        recommendationsDiv.innerHTML = `
+          <p><strong>Model:</strong> ${recommendations.model}</p>
+          <p><strong>Platform:</strong> ${recommendations.platform}</p>
+          <p><strong>Serving Framework:</strong> ${recommendations.serving}</p>
+          <p><strong>Orchestration:</strong> ${recommendations.orchestration}</p>
+        `;
+        const ctx = document.getElementById('cost-chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Hosting', 'Team', 'Total'],
+            datasets: [{
+              label: 'Cost ($)',
+              data: [costs.hosting, costs.team, costs.total],
+              backgroundColor: ['#10B981', '#FBBF24', '#A855F7']
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Cost ($)' } } }
+          }
+        });
+        document.getElementById('results').classList.remove('hidden');
+      } catch (error) {
+        console.error('Error displaying results:', error.message, error.stack);
+      }
+    }
+
+    // Navigation helper
+    function navigateTo(page) {
+      console.log(`Navigating to ${page}`);
+      window.location.href = page;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM loaded at 01:41:00 PM PDT, June 06, 2025');
+      if (!document.getElementById('analysis-form')) {
+        console.error('Critical: #analysis-form not found in DOM');
+        document.getElementById('static-form-fallback').classList.remove('hidden');
+        return;
+      }
+      initializeForm();
+      document.getElementById('submit-btn').addEventListener('click', analyzeResponses);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Trends Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .card { transition: all 0.3s ease-in-out; }
+    .card:hover { transform: translateY(-5px); }
+    .fade-in { animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .draggable { cursor: move; }
+    .drag-over { border: 2px dashed #4B5563; }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <nav class="bg-gray-800 text-white p-4 sticky top-0 z-10 shadow-lg">
+    <div class="container mx-auto flex justify-center space-x-4">
+      <a href="index.html" class="nav-link px-4 py-2 rounded" onclick="navigateTo('index.html')">Dashboard</a>
+      <a href="trends.html" class="nav-link px-4 py-2 rounded active" onclick="navigateTo('trends.html')">Trends</a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto py-8">
+    <div class="bg-white p-6 rounded-xl shadow-lg card fade-in">
+      <h2 class="text-2xl font-bold mb-4 text-gray-800"><i class="fas fa-chart-line mr-2 text-teal-500"></i>Quarterly Growth Trends</h2>
+      <div class="mb-6 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold mb-2 text-gray-700">Available Platforms</h3>
+          <div id="source-container" class="border border-gray-300 rounded-lg p-4 min-h-[150px] bg-gray-50" ondragover="allowDrop(event)" ondrop="drop(event, 'source')">
+            <!-- Draggable items populated by JavaScript -->
+          </div>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold mb-2 text-gray-700">Selected Platforms (Cart)</h3>
+          <div id="cart-container" class="border border-gray-300 rounded-lg p-4 min-h-[150px] bg-gray-50" ondragover="allowDrop(event)" ondrop="drop(event, 'cart')">
+            <!-- Dropped items appear here -->
+          </div>
+        </div>
+      </div>
+      <div id="chart-container">
+        <canvas id="trends-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  ```chartjs
+  {
+    "type": "line",
+    "data": {
+      "labels": ["Q3 2020", "Q4 2020","Q1 2021", "Q2 2021", "Q3 2021", "Q4 2021","Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022","Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023","Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024","Q1 2025"],
+      "datasets": []
+    },
+    "options": {
+      "responsive": true,
+      "plugins": {
+        "legend": { "display": true, "position": "top" },
+        "title": { "display": true, "text": "Quarterly Growth Trends" }
+      },
+      "scales": {
+        "y": { "beginAtZero": true, "title": { "display": true, "text": "Growth (%)" } },
+        "x": { "title": { "display": true, "text": "Quarter" } }
+      }
+    }
+  }
+  ```
+
+  <script>
+    // Static table of growth values - replace with your actual data
+    const growthTable = {
+      silverCluster: {
+        label: 'OpenShift Silver Cluster Growth',
+        data: [85,66,19,13,17,19,37,12,10,10,20,24,7,17,10,14,15,18,12], // Q1–Q4 2025
+        borderColor: '#94A3B8', // Silver
+        backgroundColor: 'rgba(148, 163, 184, 0.2)'
+      },
+      gold: {
+        label: 'OpenShift Gold Growth',
+        data: [0,0,0,1,6,4,7,2,3,3,2,1,2,6,7,1,1,1,8], // Q1–Q4 2025
+        borderColor: '#FBBF24', // Gold
+        backgroundColor: 'rgba(251, 191, 36, 0.2)'
+      },
+      emerald: {
+        label: 'OpenShift Emerald Growth',
+        data: [0,0,0,0,0,0,0,9,1,4,2,6,5,8,3,4,2,1,1], // Q1–Q4 2025
+        borderColor: '#10B981', // Green
+        backgroundColor: 'rgba(16, 185, 129, 0.2)'
+      },
+      aws: {
+        label: 'AWS Growth',
+        data: [0,0,0,0,0,0,0,0,0,0,0,22,1,2,4,3,3,1,2], // Q1–Q4 2025
+        borderColor: '#F28C38', // Orange
+        backgroundColor: 'rgba(255, 166, 0, 0.2)'
+      },
+      azure: {
+        label: 'Azure Growth',
+        data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,10,8,7], // Q1–Q4 2025
+        borderColor: '#0078D4', // Blue
+        backgroundColor: 'rgba(0, 120, 212, 0.2)'
+      }
+    };
+    // List of platforms for extensibility
+    const platforms = ['silverCluster', 'gold', 'emerald', 'aws', 'azure'];
+
+    // Selected platforms
+    let selectedPlatforms = [];
+
+    // Chart instance
+    let trendsChart;
+
+    // Initialize drag-and-drop and chart
+    function initialize() {
+      console.log('Initializing drag-and-drop and chart');
+      const sourceContainer = document.getElementById('source-container');
+      if (!sourceContainer) {
+        console.error('Error: #source-container not found in DOM');
+        return;
+      }
+      initializeDragAndDrop();
+      initializeChart();
+    }
+
+    // Populate source container with draggable items
+    function initializeDragAndDrop() {
+      try {
+        const sourceContainer = document.getElementById('source-container');
+        if (!sourceContainer) {
+          throw new Error('source-container element not found');
+        }
+        if (!Array.isArray(platforms) || platforms.length === 0) {
+          throw new Error('platforms array is invalid or empty');
+        }
+        if (!growthTable || typeof growthTable !== 'object') {
+          throw new Error('growthTable is undefined or invalid');
+        }
+        console.log('Populating source container with platforms:', platforms);
+        sourceContainer.innerHTML = ''; // Clear any existing items
+        platforms.forEach(platform => {
+          if (!growthTable[platform]) {
+            console.warn(`Warning: No growthTable data for platform: ${platform}`);
+            return;
+          }
+          const item = document.createElement('div');
+          item.id = `platform-${platform}`;
+          item.className = 'draggable bg-white border border-gray-200 p-2 mb-2 rounded-lg shadow-sm flex items-center';
+          item.draggable = true;
+          item.ondragstart = drag;
+          item.innerHTML = `
+            <i class="fas fa-grip-vertical mr-2 text-gray-400"></i>
+            <span>${growthTable[platform].label}</span>
+          `;
+          sourceContainer.appendChild(item);
+        });
+        console.log('Source container populated successfully');
+      } catch (error) {
+        console.error('Error in initializeDragAndDrop:', error.message);
+      }
+    }
+
+    // Initialize single chart
+    function initializeChart() {
+      try {
+        console.log('Initializing chart');
+        const ctx = document.getElementById('trends-canvas').getContext('2d');
+        if (!ctx) {
+          throw new Error('trends-canvas element not found');
+        }
+        const quarters = ["Q3 2020", "Q4 2020","Q1 2021", "Q2 2021", "Q3 2021", "Q4 2021","Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022","Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023","Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024","Q1 2025"]; // Replace labels as needed
+        trendsChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: quarters,
+            datasets: []
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: true, position: 'top' },
+              title: { display: true, text: 'Quarterly Growth Trends' }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Growth (%)' }
+              },
+              x: {
+                title: { display: true, text: 'Quarter' }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error in initializeChart:', error.message);
+      }
+    }
+
+    // Drag start handler
+    function drag(event) {
+      event.dataTransfer.setData('text', event.target.id);
+    }
+
+    // Allow drop handler
+    function allowDrop(event) {
+      event.preventDefault();
+      event.target.classList.add('drag-over');
+    }
+
+    // Drop handler
+    function drop(event, target) {
+      event.preventDefault();
+      event.target.classList.remove('drag-over');
+      const data = event.dataTransfer.getData('text');
+      const draggedElement = document.getElementById(data);
+      const dropZone = target === 'cart' ? document.getElementById('cart-container') : document.getElementById('source-container');
+
+      // Prevent dropping in same container
+      if (draggedElement.parentNode !== dropZone) {
+        dropZone.appendChild(draggedElement);
+        const platform = data.replace('platform-', '');
+        if (target === 'cart') {
+          if (!selectedPlatforms.includes(platform)) {
+            selectedPlatforms.push(platform);
+          }
+        } else {
+          selectedPlatforms = selectedPlatforms.filter(p => p !== platform);
+        }
+        updateChart();
+      }
+    }
+
+    // Update chart datasets based on selected platforms
+    function updateChart() {
+      console.log('Updating chart with platforms:', selectedPlatforms);
+      trendsChart.data.datasets = selectedPlatforms.map(platform => ({
+        label: growthTable[platform].label,
+        data: growthTable[platform].data,
+        borderColor: growthTable[platform].borderColor,
+        backgroundColor: growthTable[platform].backgroundColor,
+        fill: true,
+        tension: 0.4
+      }));
+      trendsChart.update();
+    }
+
+    // Navigation helper
+    function navigateTo(page) {
+      console.log(`Navigating to ${page}`);
+      window.location.href = page;
+    }
+
+    // For future data layer: Example of fetching data
+    /*
+    async function fetchGrowthTable() {
+      try {
+        const response = await fetch('data/growth.json');
+        const data = await response.json();
+        Object.keys(growthTable).forEach(platform => {
+          growthTable[platform].data = data[platform];
+        });
+        updateChart();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    */
+
+    // Initialize on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM loaded at 09:25:00 AM PDT, June 10, 2025');
+      if (!document.getElementById('source-container')) {
+        console.error('Critical: #source-container not found in DOM at load time');
+        return;
+      }
+      initialize();
+      // Uncomment for future data layer: fetchGrowthTable();
+    });
+
+    // Remove drag-over class when drag leaves
+    document.getElementById('source-container')?.addEventListener('dragleave', function() {
+      this.classList.remove('drag-over');
+    });
+    document.getElementById('cart-container')?.addEventListener('dragleave', function() {
+      this.classList.remove('drag-over');
+    });
+  </script>
+</body>
+</html>
+
+

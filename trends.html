@@ -73,31 +73,31 @@
     const growthTable = {
       silverCluster: {
         label: 'OpenShift Silver Cluster Growth',
-        data: [85,66,19,13,17,19,37,12,10,10,20,24,7,17,10,14,15,18,12], // Q1–Q4 2025
+        data: [85,66,19,13,17,19,37,12,10,10,20,24,7,17,10,14,15,18,12,8,0], // Q1–Q4 2025
         borderColor: '#94A3B8', // Silver
         backgroundColor: 'rgba(148, 163, 184, 0.2)'
       },
       gold: {
         label: 'OpenShift Gold Growth',
-        data: [0,0,0,1,6,4,7,2,3,3,2,1,2,6,7,1,1,1,8], // Q1–Q4 2025
+        data: [0,0,0,1,6,4,7,2,3,3,2,1,2,6,7,1,1,1,8,6,0], // Q1–Q4 2025
         borderColor: '#FBBF24', // Gold
         backgroundColor: 'rgba(251, 191, 36, 0.2)'
       },
       emerald: {
         label: 'OpenShift Emerald Growth',
-        data: [0,0,0,0,0,0,0,9,1,4,2,6,5,8,3,4,2,1,1], // Q1–Q4 2025
+        data: [0,0,0,0,0,0,0,9,1,4,2,6,5,8,3,4,2,1,1,2,0], // Q1–Q4 2025
         borderColor: '#10B981', // Green
         backgroundColor: 'rgba(16, 185, 129, 0.2)'
       },
       aws: {
         label: 'AWS Growth',
-        data: [0,0,0,0,0,0,0,0,0,0,0,22,1,2,4,3,3,1,2], // Q1–Q4 2025
+        data: [0,0,0,0,0,0,0,0,0,0,0,22,1,2,4,3,3,1,2,14,0], // Q1–Q4 2025
         borderColor: '#A855F7', // Purple
         backgroundColor: 'rgba(168, 85, 247, 0.2)',
       },
       azure: {
         label: 'Azure Growth',
-        data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,10,8,7], // Q1–Q4 2025
+        data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,10,8,7,9,3], // Q1–Q4 2025
         borderColor: '#0078D4', // Blue
         backgroundColor: 'rgba(0, 120, 212, 0.2)'
       }
@@ -168,7 +168,7 @@
         if (!ctx) {
           throw new Error('trends-canvas element not found');
         }
-        const quarters = ["Q3 2020", "Q4 2020","Q1 2021", "Q2 2021", "Q3 2021", "Q4 2021","Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022","Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023","Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024","Q1 2025"]; // Replace labels as needed
+        const quarters = ["Q3 2020", "Q4 2020","Q1 2021", "Q2 2021", "Q3 2021", "Q4 2021","Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022","Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023","Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024","Q1 2025", "Q2 2025","Q3 2025"]; // Replace labels as needed
         trendsChart = new Chart(ctx, {
           type: 'line',
           data: {
